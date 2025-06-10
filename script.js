@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Stripe with Publishable Key
+    const stripe = Stripe('pk_live_51RHruF06XnUtC0HX0w4CWzfNMGATA0skgovfEEJOOyb5PpOlWx5rfOCv3JdugRmy1AUMrCC1xsxfhBvpiI6jGX3W00UvAfDAeL'); // Replace with your Stripe Publishable Key
+
     const backToTopButton = document.querySelector('.back-to-top');
 
     window.addEventListener('scroll', function() {
@@ -101,8 +104,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 if (key === 'contactUs') {
                     modals.contactUs.style.display = 'flex';
-                } else if (key === 'profilePictureCheckout') {
-                    modals.profilePictureCheckout.style.display = 'flex';
                 } else if (key === 'profilePicture') {
                     modals.profilePictureCheckout.style.display = 'flex';
                 } else {
@@ -155,131 +156,158 @@ document.addEventListener('DOMContentLoaded', function() {
             selector: '#followersModal .followers-purchase-btn',
             inputs: ['followers-gamertag'],
             tosCheckbox: 'followers-tos-agreement',
-            urls: {
-                '1000': 'https://paymentpage',
-                '2000': 'https://paymentpage',
-                '5000': 'https://paymentpage',
-                '10000': 'https://paymentpage',
-                '20000': 'https://paymentpage',
-                default: 'https://x6aa.com/'
-            }
+            productName: 'Profile Visibility Boost'
         },
         gamerscore: {
             selector: '#gamerscoreModal .gamerscore-purchase-btn',
             inputs: ['gamerscore-gamertag'],
             tosCheckbox: 'gamerscore-tos-agreement',
-            urls: {
-                '50000': 'https://paymentpage',
-                '200000': 'https://paymentpage',
-                '500000': 'https://paymentpage',
-                '1000000': 'https://paymentpage',
-                default: 'https://x6aa.com/'
-            }
+            productName: 'Gamerscore Enhancement'
         },
         gamertag: {
             selector: '#gamertagModal .gamertag-purchase-btn',
             inputs: ['gamertag-email'],
             tosCheckbox: 'gamertag-tos-agreement',
-            urls: {
-                'daily': 'https://paymentpage',
-                'weekly': 'https://paymentpage',
-                'monthly': 'https://paymentpage',
-                'lifetime': 'https://paymentpage',
-                default: 'https://x6aa.com/'
-            }
+            productName: 'Rare Gamertag Reservation'
         },
         lfg: {
             selector: '#lfgModal .lfg-purchase-btn',
             inputs: ['lfg-email'],
             tosCheckbox: 'lfg-tos-agreement',
-            urls: {
-                'daily': 'https://paymentpage',
-                'weekly': 'https://paymentpage',
-                'monthly': 'https://paymentpage',
-                'lifetime': 'https://paymentpage',
-                default: 'https://x6aa.com/'
-            }
+            productName: 'LFG Promotion'
         },
         followerBot: {
             selector: '#followerBotModal .follower-bot-purchase-btn',
             inputs: ['follower-bot-email'],
             tosCheckbox: 'follower-bot-tos-agreement',
-            urls: {
-                'daily': 'https://paymentpage',
-                'weekly': 'https://paymentpage',
-                'monthly': 'https://paymentpage',
-                'lifetime': 'https://paymentpage',
-                default: 'https://x6aa.com/'
-            }
+            productName: 'Follower Boost Manager'
         },
         messageSpammer: {
             selector: '#messageSpammerModal .message-spammer-purchase-btn',
             inputs: ['message-spammer-email'],
             tosCheckbox: 'message-spammer-tos-agreement',
-            urls: {
-                'daily': 'https://paymentpage',
-                'weekly': 'https://paymentpage',
-                'monthly': 'https://paymentpage',
-                'lifetime': 'https://paymentpage',
-                default: 'https://x6aa.com/'
-            }
+            productName: 'Message Sender'
         },
         profilePicture: {
             selector: '#profilePictureModal .profile-picture-purchase-btn',
             inputs: ['profile-picture-gamertag', 'profile-picture-selection'],
             tosCheckbox: 'profile-picture-tos-agreement',
-            urls: {
-                'custom': 'https://paymentpage',
-                default: 'https://x6aa.com/'
-            }
+            productName: 'Classic Xbox Profile Picture'
         },
         profilePictureCheckout: {
             selector: '#profilePictureCheckoutModal .profile-picture-checkout-btn',
             inputs: ['profile-picture-checkout-gamertag', 'profile-picture-checkout-link'],
             tosCheckbox: 'profile-picture-checkout-tos-agreement',
-            urls: {
-                'custom': 'https://paymentpage',
-                default: 'https://paymentpage'
-            }
+            productName: 'Classic Xbox Profile Picture'
         }
     };
 
     Object.keys(purchaseHandlers).forEach(key => {
-        document.querySelector(purchaseHandlers[key].selector).addEventListener('click', function(e) {
-            e.preventDefault();
-            const inputs = purchaseHandlers[key].inputs.map(id => document.getElementById(id));
-            const tosCheckbox = document.getElementById(purchaseHandlers[key].tosCheckbox);
-            const selectedPackage = modals[key].querySelector('.package-option.active');
-            let hasError = false;
+        document.querySelectorAll(purchaseHandlers[key].selector).forEach(button => {
+            button.addEventListener('click', async function(e) {
+                e.preventDefault();
+                const modal = this.closest('.modal-overlay');
+                const inputs = purchaseHandlers[key].inputs.map(id => document.getElementById(id));
+                const tosCheckbox = document.getElementById(purchaseHandlers[key].tosCheckbox);
+                const selectedPackage = modal.querySelector('.package-option.active');
+                let hasError = false;
+                let firstInvalidElement = null;
 
-            inputs.forEach(input => {
-                if (!input.value) {
-                    input.classList.remove('shake');
-                    void input.offsetWidth;
-                    input.classList.add('shake');
-                    input.style.border = '2px solid #ff4444';
-                    setTimeout(() => input.classList.remove('shake'), 500);
+                // Check inputs
+                inputs.forEach(input => {
+                    if (!input.value) {
+                        input.classList.remove('shake');
+                        void input.offsetWidth; // Trigger reflow for animation restart
+                        input.classList.add('shake');
+                        input.style.border = '2px solid #ff4444';
+                        setTimeout(() => input.classList.remove('shake'), 500);
+                        if (!firstInvalidElement) firstInvalidElement = input; // Store first invalid input
+                        hasError = true;
+                    } else {
+                        input.style.border = '';
+                    }
+                });
+
+                // Check ToS checkbox
+                if (!tosCheckbox.checked) {
+                    tosCheckbox.classList.remove('shake', 'red-neon-glow');
+                    void tosCheckbox.offsetWidth;
+                    tosCheckbox.classList.add('shake', 'red-neon-glow');
+                    setTimeout(() => {
+                        tosCheckbox.classList.remove('shake', 'red-neon-glow');
+                    }, 800);
+                    if (!firstInvalidElement) firstInvalidElement = tosCheckbox; // Store ToS if no invalid inputs
                     hasError = true;
-                } else {
-                    input.style.border = '';
+                }
+
+                // Scroll to the first invalid element if there’s an error
+                if (hasError && firstInvalidElement) {
+                    const modalContent = modal.querySelector('.modal-content');
+                    firstInvalidElement.scrollIntoView({
+                        behavior: 'smooth', // Smooth scrolling
+                        block: 'center' // Center the element in the modal’s visible area
+                    });
+                    // Ensure the modal content itself scrolls (in case scrollIntoView doesn’t adjust it)
+                    modalContent.scrollTop = firstInvalidElement.offsetTop - modalContent.offsetTop - 50; // Add padding
+                    return;
+                }
+
+                // Disable the button
+                this.classList.add('disabled');
+                this.disabled = true;
+
+                const amount = selectedPackage.dataset.amount;
+                const price = parseFloat(selectedPackage.dataset.price);
+                const productName = purchaseHandlers[key].productName;
+                const inputValues = {};
+                inputs.forEach(input => {
+                    inputValues[input.id] = input.value;
+                });
+
+                let userIp = 'Unknown';
+                let country = 'Unknown';
+                try {
+                    const ipResponse = await fetch('https://ipapi.co/json/');
+                    const ipData = await ipResponse.json();
+                    userIp = ipData.ip;
+                    country = ipData.country_name;
+                } catch (error) {
+                    console.error('Error fetching IP data:', error);
+                }
+
+                const data = {
+                    productName,
+                    amount,
+                    price,
+                    userIp,
+                    country,
+                    ...inputValues
+                };
+
+                try {
+                    const response = await fetch('https://d817-173-208-162-126.ngrok-free.app/create-checkout-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    const session = await response.json();
+
+                    if (session.url) {
+                        window.location.href = session.url;
+                    } else {
+                        alert('Failed to create checkout session. Please try again.');
+                        // Re-enable the button on failure
+                        this.classList.remove('disabled');
+                        this.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('Error creating checkout session:', error);
+                    alert('An error occurred. Please try again later.');
+                    // Re-enable the button on error
+                    this.classList.remove('disabled');
+                    this.disabled = false;
                 }
             });
-
-            if (hasError) return;
-
-            if (!tosCheckbox.checked) {
-                tosCheckbox.classList.remove('shake', 'red-neon-glow');
-                void tosCheckbox.offsetWidth;
-                tosCheckbox.classList.add('shake', 'red-neon-glow');
-                setTimeout(() => {
-                    tosCheckbox.classList.remove('shake', 'red-neon-glow');
-                }, 800);
-                return;
-            }
-
-            const amount = selectedPackage.dataset.amount;
-            const url = purchaseHandlers[key].urls[amount] || purchaseHandlers[key].urls.default;
-            window.location.href = url;
         });
     });
 
