@@ -1619,6 +1619,7 @@ body {
 .btn-primary {
     background: #00ff88;
     color: #0a0a0a;
+    user-select: none;
 }
 
 .btn-primary:hover {
@@ -2101,4 +2102,13 @@ button.billgang:hover {
     .announcement-close {
         font-size: 1.3rem;
     }
+}
+
+.btn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.modal-content {
+    scroll-behavior: smooth;
 }
