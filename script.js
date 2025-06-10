@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Stripe with Publishable Key
-    const stripe = Stripe('pk_test_51RHruN04c7E7RceeZC2xSPAksqZpssfSz0MAPzZz9B4zAvbkxwYx0EI5cor8XV7pCc9mKZKHFmGSi2UahdMAL7uH00EgAFSQnZ'); // Replace with your Stripe Publishable Key
+    const stripe = Stripe('pk_live_51RHruF06XnUtC0HX0w4CWzfNMGATA0skgovfEEJOOyb5PpOlWx5rfOCv3JdugRmy1AUMrCC1xsxfhBvpiI6jGX3W00UvAfDAeL'); // Replace with your Stripe Publishable Key
 
     const backToTopButton = document.querySelector('.back-to-top');
 
