@@ -83,7 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
         messageSpammer: document.getElementById('messageSpammerModal'),
         profilePicture: document.getElementById('profilePictureModal'),
         profilePictureCheckout: document.getElementById('profilePictureCheckoutModal'),
-        contactUs: document.getElementById('contactUsModal')
+        contactUs: document.getElementById('contactUsModal'),
+        rareGamertag: document.getElementById('rareGamertagModal')
     };
 
     const buttons = {
@@ -95,7 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
         messageSpammer: document.querySelectorAll('.message-spammer-purchase-btn'),
         profilePicture: document.querySelectorAll('.profile-picture-purchase-btn'),
         profilePictureCheckout: document.querySelectorAll('.profile-picture-checkout-btn'),
-        contactUs: document.querySelectorAll('.custom-package-btn')
+        contactUs: document.querySelectorAll('.custom-package-btn'),
+        rareGamertag: document.querySelectorAll('.rare-gamertag-purchase-btn')
     };
 
     Object.keys(buttons).forEach(key => {
@@ -151,6 +153,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Handle package selection for Rare Xbox Gamertag Modal
+    document.querySelectorAll('#rareGamertagModal .package-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const modal = this.closest('.modal-overlay');
+            const amount = this.getAttribute('data-amount');
+            const price = this.getAttribute('data-price');
+            const packageName = this.querySelector('h4').textContent;
+
+            // Update order summary
+            modal.querySelector('.selected-package').textContent = packageName;
+            modal.querySelector('.selected-price').textContent = `$${price}`;
+            modal.querySelector('.total-price').textContent = `$${price}`;
+
+            // Toggle content based on package
+            const standardContent = modal.querySelector('.standard-content');
+            const wordContent = modal.querySelector('.word-content');
+            if (amount === 'word') {
+                standardContent.style.display = 'none';
+                wordContent.style.display = 'block';
+            } else {
+                standardContent.style.display = 'block';
+                wordContent.style.display = 'none';
+            }
+        });
+    });
+
     const purchaseHandlers = {
         followers: {
             selector: '#followersModal .followers-purchase-btn',
@@ -199,6 +227,12 @@ document.addEventListener('DOMContentLoaded', function() {
             inputs: ['profile-picture-checkout-gamertag', 'profile-picture-checkout-link'],
             tosCheckbox: 'profile-picture-checkout-tos-agreement',
             productName: 'Classic Xbox Profile Picture'
+        },
+        rareGamertag: {
+            selector: '#rareGamertagModal .rare-gamertag-purchase-btn',
+            inputs: ['rare-gamertag-email'],
+            tosCheckbox: 'rare-gamertag-tos-agreement',
+            productName: 'Rare Xbox Gamertag'
         }
     };
 
