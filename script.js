@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Stripe with Publishable Key
-    const stripe = Stripe('pk_live_51RHruF06XnUtC0HX0w4CWzfNMGATA0skgovfEEJOOyb5PpOlWx5rfOCv3JdugRmy1AUMrCC1xsxfhBvpiI6jGX3W00UvAfDAeL'); // Replace with your Stripe Publishable Key
+    const stripe = Stripe('pk_live_51RHruF06XnUtC0HX0w4CWzfNMGATA0skgovfEEJOOyb5PpOlWx5rfOCv3JdugRmy1AUMrCC1xsxfhBvpiI6jGX3W00UvAfDAeL');
 
     const backToTopButton = document.querySelector('.back-to-top');
 
@@ -84,7 +83,10 @@ document.addEventListener('DOMContentLoaded', function() {
         profilePicture: document.getElementById('profilePictureModal'),
         profilePictureCheckout: document.getElementById('profilePictureCheckoutModal'),
         contactUs: document.getElementById('contactUsModal'),
-        rareGamertag: document.getElementById('rareGamertagModal')
+        rareGamertag: document.getElementById('rareGamertagModal'),
+        codPoints: document.getElementById('codPointsModal'),
+        sharkCard: document.getElementById('sharkCardModal'),
+        instagramUsername: document.getElementById('instagramUsernameModal')
     };
 
     const buttons = {
@@ -97,7 +99,10 @@ document.addEventListener('DOMContentLoaded', function() {
         profilePicture: document.querySelectorAll('.profile-picture-purchase-btn'),
         profilePictureCheckout: document.querySelectorAll('.profile-picture-checkout-btn'),
         contactUs: document.querySelectorAll('.custom-package-btn'),
-        rareGamertag: document.querySelectorAll('.rare-gamertag-purchase-btn')
+        rareGamertag: document.querySelectorAll('.rare-gamertag-purchase-btn'),
+        codPoints: document.querySelectorAll('.cod-points-purchase-btn'),
+        sharkCard: document.querySelectorAll('.shark-card-purchase-btn'),
+        instagramUsername: document.querySelectorAll('.instagram-username-purchase-btn')
     };
 
     Object.keys(buttons).forEach(key => {
@@ -153,31 +158,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle package selection for Rare Xbox Gamertag Modal
     document.querySelectorAll('#rareGamertagModal .package-option').forEach(option => {
-        option.addEventListener('click', function() {
-            const modal = this.closest('.modal-overlay');
-            const amount = this.getAttribute('data-amount');
-            const price = this.getAttribute('data-price');
-            const packageName = this.querySelector('h4').textContent;
-
-            // Update order summary
-            modal.querySelector('.selected-package').textContent = packageName;
-            modal.querySelector('.selected-price').textContent = `$${price}`;
-            modal.querySelector('.total-price').textContent = `$${price}`;
-
-            // Toggle content based on package
-            const standardContent = modal.querySelector('.standard-content');
-            const wordContent = modal.querySelector('.word-content');
-            if (amount === 'word') {
-                standardContent.style.display = 'none';
-                wordContent.style.display = 'block';
-            } else {
-                standardContent.style.display = 'block';
-                wordContent.style.display = 'none';
-            }
-        });
+    option.addEventListener('click', function() {
+        const modal = this.closest('.modal-overlay');
+        modal.querySelectorAll('.package-option').forEach(opt => opt.classList.remove('active'));
+        this.classList.add('active');
+        const price = this.getAttribute('data-price');
+        const packageName = this.querySelector('h4').textContent;
+        modal.querySelector('.selected-package').textContent = packageName;
+        modal.querySelector('.selected-price').textContent = `$${price}`;
+        modal.querySelector('.total-price').textContent = `$${price}`;
     });
+});
 
     const purchaseHandlers = {
         followers: {
@@ -233,6 +225,24 @@ document.addEventListener('DOMContentLoaded', function() {
             inputs: ['rare-gamertag-email'],
             tosCheckbox: 'rare-gamertag-tos-agreement',
             productName: 'Rare Xbox Gamertag'
+        },
+        codPoints: {
+            selector: '#codPointsModal .cod-points-purchase-btn',
+            inputs: ['cod-points-gamertag'],
+            tosCheckbox: 'cod-points-tos-agreement',
+            productName: 'Call of Duty COD Points'
+        },
+        sharkCard: {
+            selector: '#sharkCardModal .shark-card-purchase-btn',
+            inputs: ['shark-card-gamertag'],
+            tosCheckbox: 'shark-card-tos-agreement',
+            productName: 'GTA 5 Shark Card'
+        },
+        instagramUsername: {
+            selector: '#instagramUsernameModal .instagram-username-purchase-btn',
+            inputs: ['instagram-username-email'],
+            tosCheckbox: 'instagram-username-tos-agreement',
+            productName: 'Instagram Rare Username'
         }
     };
 
@@ -247,22 +257,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 let hasError = false;
                 let firstInvalidElement = null;
 
-                // Check inputs
                 inputs.forEach(input => {
                     if (!input.value) {
                         input.classList.remove('shake');
-                        void input.offsetWidth; // Trigger reflow for animation restart
+                        void input.offsetWidth;
                         input.classList.add('shake');
                         input.style.border = '2px solid #ff4444';
                         setTimeout(() => input.classList.remove('shake'), 500);
-                        if (!firstInvalidElement) firstInvalidElement = input; // Store first invalid input
+                        if (!firstInvalidElement) firstInvalidElement = input;
                         hasError = true;
                     } else {
                         input.style.border = '';
                     }
                 });
 
-                // Check ToS checkbox
                 if (!tosCheckbox.checked) {
                     tosCheckbox.classList.remove('shake', 'red-neon-glow');
                     void tosCheckbox.offsetWidth;
@@ -270,23 +278,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(() => {
                         tosCheckbox.classList.remove('shake', 'red-neon-glow');
                     }, 800);
-                    if (!firstInvalidElement) firstInvalidElement = tosCheckbox; // Store ToS if no invalid inputs
+                    if (!firstInvalidElement) firstInvalidElement = tosCheckbox;
                     hasError = true;
                 }
 
-                // Scroll to the first invalid element if there’s an error
                 if (hasError && firstInvalidElement) {
                     const modalContent = modal.querySelector('.modal-content');
                     firstInvalidElement.scrollIntoView({
-                        behavior: 'smooth', // Smooth scrolling
-                        block: 'center' // Center the element in the modal’s visible area
+                        behavior: 'smooth',
+                        block: 'center'
                     });
-                    // Ensure the modal content itself scrolls (in case scrollIntoView doesn’t adjust it)
-                    modalContent.scrollTop = firstInvalidElement.offsetTop - modalContent.offsetTop - 50; // Add padding
+                    modalContent.scrollTop = firstInvalidElement.offsetTop - modalContent.offsetTop - 50;
                     return;
                 }
 
-                // Disable the button
                 this.classList.add('disabled');
                 this.disabled = true;
 
@@ -330,14 +335,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.location.href = session.url;
                     } else {
                         alert('Failed to create checkout session. Please try again.');
-                        // Re-enable the button on failure
                         this.classList.remove('disabled');
                         this.disabled = false;
                     }
                 } catch (error) {
                     console.error('Error creating checkout session:', error);
                     alert('An error occurred. Please try again later.');
-                    // Re-enable the button on error
                     this.classList.remove('disabled');
                     this.disabled = false;
                 }
