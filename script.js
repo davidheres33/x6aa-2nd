@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
 
                 try {
-                    const response = await fetch('https://d817-173-208-162-126.ngrok-free.app/create-checkout-session', {
+                    const response = await fetch('https://a3ed-173-208-162-126.ngrok-free.app/create-checkout-session', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
