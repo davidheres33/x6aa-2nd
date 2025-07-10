@@ -159,17 +159,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.querySelectorAll('#rareGamertagModal .package-option').forEach(option => {
-    option.addEventListener('click', function() {
-        const modal = this.closest('.modal-overlay');
-        modal.querySelectorAll('.package-option').forEach(opt => opt.classList.remove('active'));
-        this.classList.add('active');
-        const price = this.getAttribute('data-price');
-        const packageName = this.querySelector('h4').textContent;
-        modal.querySelector('.selected-package').textContent = packageName;
-        modal.querySelector('.selected-price').textContent = `$${price}`;
-        modal.querySelector('.total-price').textContent = `$${price}`;
+        option.addEventListener('click', function() {
+            const modal = this.closest('.modal-overlay');
+            modal.querySelectorAll('.package-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            const price = this.getAttribute('data-price');
+            const packageName = this.querySelector('h4').textContent;
+            modal.querySelector('.selected-package').textContent = packageName;
+            modal.querySelector('.selected-price').textContent = `$${price}`;
+            modal.querySelector('.total-price').textContent = `$${price}`;
+        });
     });
-});
 
     const purchaseHandlers = {
         followers: {
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
             selector: '#gamertagModal .gamertag-purchase-btn',
             inputs: ['gamertag-email'],
             tosCheckbox: 'gamertag-tos-agreement',
-            productName: 'Rare Gamertag Reservation'
+            productName: 'Rare Gamertag Reservations'
         },
         lfg: {
             selector: '#lfgModal .lfg-purchase-btn',
@@ -295,7 +295,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.add('disabled');
                 this.disabled = true;
 
-                const amount = selectedPackage.dataset.amount;
                 const price = parseFloat(selectedPackage.dataset.price);
                 const productName = purchaseHandlers[key].productName;
                 const inputValues = {};
@@ -316,7 +315,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const data = {
                     productName,
-                    amount,
                     price,
                     userIp,
                     country,
