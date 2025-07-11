@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const stripe = Stripe('pk_live_51RHruF06XnUtC0HX0w4CWzfNMGATA0skgovfEEJOOyb5PpOlWx5rfOCv3JdugRmy1AUMrCC1xsxfhBvpiI6jGX3W00UvAfDAeL');
+    const stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
     const backToTopButton = document.querySelector('.back-to-top');
 
