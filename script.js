@@ -86,7 +86,8 @@ document.addEventListener('DOMContentLoaded', function() {
         rareGamertag: document.getElementById('rareGamertagModal'),
         codPoints: document.getElementById('codPointsModal'),
         sharkCard: document.getElementById('sharkCardModal'),
-        instagramUsername: document.getElementById('instagramUsernameModal')
+        instagramUsername: document.getElementById('instagramUsernameModal'),
+        forzaCredits: document.getElementById('forzaCreditsModal')
     };
 
     const buttons = {
@@ -102,7 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
         rareGamertag: document.querySelectorAll('.rare-gamertag-purchase-btn'),
         codPoints: document.querySelectorAll('.cod-points-purchase-btn'),
         sharkCard: document.querySelectorAll('.shark-card-purchase-btn'),
-        instagramUsername: document.querySelectorAll('.instagram-username-purchase-btn')
+        instagramUsername: document.querySelectorAll('.instagram-username-purchase-btn'),
+        forzaCredits: document.querySelectorAll('.forza-credits-purchase-btn')
     };
 
     Object.keys(buttons).forEach(key => {
@@ -159,6 +161,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.querySelectorAll('#rareGamertagModal .package-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const modal = this.closest('.modal-overlay');
+            modal.querySelectorAll('.package-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            const price = this.getAttribute('data-price');
+            const packageName = this.querySelector('h4').textContent;
+            modal.querySelector('.selected-package').textContent = packageName;
+            modal.querySelector('.selected-price').textContent = `$${price}`;
+            modal.querySelector('.total-price').textContent = `$${price}`;
+        });
+    });
+
+    document.querySelectorAll('#forzaCreditsModal .package-option').forEach(option => {
         option.addEventListener('click', function() {
             const modal = this.closest('.modal-overlay');
             modal.querySelectorAll('.package-option').forEach(opt => opt.classList.remove('active'));
@@ -243,6 +258,12 @@ document.addEventListener('DOMContentLoaded', function() {
             inputs: ['instagram-username-email'],
             tosCheckbox: 'instagram-username-tos-agreement',
             productName: 'Instagram Rare Username'
+        },
+        forzaCredits: {
+            selector: '#forzaCreditsModal .forza-credits-purchase-btn',
+            inputs: ['forza-credits-gamertag'],
+            tosCheckbox: 'forza-credits-tos-agreement',
+            productName: 'Forza Horizon 5 Credits'
         }
     };
 
